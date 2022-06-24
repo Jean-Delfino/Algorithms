@@ -89,7 +89,7 @@ void printMissionsPath(GraphNode *graph, int nodesCnt){
 
   //Yes, bubble sort
   for(i = 0; i < printCnt; i++){
-    for(j = i; j < printCnt - 1; j++){
+    for(j = 0; j < printCnt - 1; j++){
       if(vectorMission[j].ID > vectorMission[j+1].ID){
         aux = vectorMission[j+1];
         vectorMission[j+1] = vectorMission[j];
