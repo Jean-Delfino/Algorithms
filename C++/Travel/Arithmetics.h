@@ -17,12 +17,7 @@ struct Point {
   }
 };
 
-class Arithmetics {
-public:
-  double ManhattanDistance(Point p1, Point p2);
-  double EuclidianDistance(Point p1, Point p2);
-
-protected:
-};
+double ManhattanDistance(Point p1, Point p2);
+double EuclidianDistance(Point p1, Point p2);
 
 #endif

@@ -1,7 +1,9 @@
 #ifndef TRAVEL_H
 #define TRAVEL_H
 
+#include <iostream>
 #include <queue>
+#include <vector>
 
 using namespace std;
 
@@ -13,17 +15,26 @@ struct TravelPoint {
   int actualPathSize;
   double totalDistance;
   Point actualPoint;
+  vector<Point> pointsList;
 
-  TravelPoint(int row, int col, int path, double distanceToFinalPoint)
-      : actualPoint(row, col) {
+  TravelPoint(int col, int lin, int path, double distanceToFinalPoint)
+      : actualPoint(col, lin) {
     actualPathSize = path;
-    totalDistance = path + distanceToFinalPoint;
+    totalDistance = distanceToFinalPoint;
+  }
+
+  TravelPoint(const TravelPoint &other, Point newPoint, int pathIncrease,
+              double totalDistance)
+      : TravelPoint(newPoint.x, newPoint.y, other.actualPathSize + pathIncrease,
+                    totalDistance)
+
+  {
+    pointsList = other.pointsList;
+    pointsList.push_back(actualPoint);
   }
 
   bool operator<(const TravelPoint &other) const {
-    if (totalDistance < other.totalDistance)
-      return true;
-    return false;
+    return totalDistance > other.totalDistance;
   }
 };
 
@@ -33,6 +44,7 @@ public:
                        double (*distanceMethod)(Point, Point));
 
 protected:
+private:
 };
 
 #endif

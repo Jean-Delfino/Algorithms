@@ -1,26 +1,72 @@
-#include <iostream>
+#include "Arithmetics.h"
+#include "Travel.h"
+#include <cstring>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
-int main(int argc, char** argv) {
-	string nameFile;
-	getline(cin, nameFile);
-	ifstream travelFile("Travel/" + nameFile); 
+#define SEPARATOR ' '
 
-  	int N;
-  	travelFile >> N;
+int *divideString(string numbers, int numberAmount, char separator) {
+  int i, cnt = 0;
+  int *res = new int[numberAmount];
+  string value;
+  for (i = 0; i < numbers.length(); i++) {
+    if (numbers[i] == separator) {
+      res[cnt] = stoi(value);
+      cnt++;
+      value = "";
+      continue;
+    }
+    value += numbers[i];
+  }
+  res[cnt] = stoi(value);
+  return res;
+}
 
-  	int** graph = new int*[N];
-  	for (int i = 0; i < N; i++) {
-    	graph[i] = new int[N];
-  	}
+int main(int argc, char **argv) {
+  string nameFile;
+  ifstream travelFile;
+  int lin, col;
+  int endLin, endCol;
 
-  	for (int i = 0; i < N; i++) {
-    	for (int j = 0; j < N; j++) {
-      		travelFile >> graph[i][j];
-    	}
-  	}	
-  	
-	return 0;
+  do {
+    cout << "File name : ";
+    getline(cin, nameFile);
+    travelFile.open("Travel/" + nameFile);
+  } while (!travelFile.good());
+
+  travelFile >> lin >> col;
+
+  int **matriz = new int *[lin];
+  string numbers;
+
+  getline(travelFile, numbers); //\n garbage
+  for (int i = 0; i < lin; i++) {
+    getline(travelFile, numbers);
+    matriz[i] = divideString(numbers, col, SEPARATOR);
+  }
+
+  for (int i = 0; i < lin; i++) {
+    for (int j = 0; j < col; j++) {
+      cout << matriz[i][j] << " ";
+    }
+    cout << endl;
+  }
+
+  travelFile >> endLin >> endCol;
+  cout << endLin << " " << endCol << endl;
+
+  Travel minePath;
+  cout << minePath.TravelPointGraph(matriz, col, lin, Point(0, 0),
+                                    Point(endCol, endLin), EuclidianDistance)
+       << endl;
+
+  for (int i = 0; i < lin; i++) {
+    delete[] matriz[i];
+  }
+
+  delete[] matriz;
+  return 0;
 }
