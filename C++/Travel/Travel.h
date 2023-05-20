@@ -17,14 +17,12 @@ struct TravelPoint {
   Point actualPoint;
   vector<Point> pointsList;
 
-  TravelPoint(int col, int lin, int path, double distanceToFinalPoint)
-      : actualPoint(col, lin) {
+  TravelPoint(int col, int lin, int path, double distanceToFinalPoint) : actualPoint(col, lin) {
     actualPathSize = path;
     totalDistance = distanceToFinalPoint;
   }
 
-  TravelPoint(const TravelPoint &other, Point newPoint, int pathIncrease,
-              double totalDistance)
+  TravelPoint(const TravelPoint &other, Point newPoint, int pathIncrease, double totalDistance)
       : TravelPoint(newPoint.x, newPoint.y, other.actualPathSize + pathIncrease,
                     totalDistance)
 
@@ -40,8 +38,8 @@ struct TravelPoint {
 
 class Travel {
 public:
-  int TravelPointGraph(int **graph, int col, int lin, Point origin, Point dest,
-                       double (*distanceMethod)(Point, Point));
+  int TravelPointGraph(int **graph, int col, int lin, Point origin, Point dest, double (*distanceMethod)(Point, Point));
+  int FindNumberOfValidPathToPoint(int **graph, int lin, int col, Point origin, Point dest);
 
 protected:
 private:
