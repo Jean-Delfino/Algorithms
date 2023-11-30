@@ -1,9 +1,13 @@
 #include "ConwayGame.h"
 #include "SDLEventHandler.h"
 
+//ENTIRELY BASED ON THIS UDEMY COURSE : https://www.udemy.com/course/conways-game-of-life-with-sdl2/
+//I DID MAKE MY OWN CHANGES, BUT THE LOGIC IS IN THE COURSE
+//HIS GITHUB : https://github.com/davlondev/game-of-life-sdl2/blob/main/Game.cpp
+
 static Uint32 nextTime;
 
-Uint32 TimeLeft(){
+Uint32 TimeLeft(){ 
     Uint32 curTime = SDL_GetTicks();
 
     return max(nextTime - curTime, (Uint32) 0);
@@ -21,60 +25,14 @@ void ConwayGame::InitGrid(int cols, int rows){
         vector<Cell> cellsCollum;
         for (j = 0; j < cols; j++)
         {
-            cellsCollum.push_back(Cell());
+            cellsCollum.push_back(Cell()); 
         }
-        grid.cells.push_back(cellsCollum);
+        grid.cells.push_back(cellsCollum);//send a entire collumn of cells
     }
 }
 
-void ConwayGame::Draw(){
-    bool find = false;
-    for (int i = 0; i < grid.rows; i++)
-    {
-        for (int j = 0; j < grid.cols; j++)
-        {
-            SDL_FRect rect = {
-                grid.cellWidthGap + (float)grid.posX + ((float)j * grid.cellWidth),
-                grid.cellHeightGap + (float)grid.posX + ((float)i * grid.cellHeight),
-                (float)grid.cellWidth,
-                (float)grid.cellHeight,
-            };
-
-            if(grid.cells[i][j].alive){
-                handler.SetRenderDrawColor(grid.aliveColor.x, 
-                    grid.aliveColor.y, 
-                    grid.aliveColor.z, 
-                    grid.aliveColor.w);
-
-            }else{
-                handler.SetRenderDrawColor(grid.deadColor.x, 
-                    grid.deadColor.y, 
-                    grid.deadColor.z, 
-                    grid.deadColor.w);
-            }
-
-            if(simulation.mouseX > rect.x && simulation.mouseX < rect.x + rect.w){
-                if(simulation.mouseY > rect.y && simulation.mouseY < rect.y + rect.h){
-                    simulation.mouseCellX = i;
-                    simulation.mouseCellY = j;
-                    find = true;
-
-                    handler.SetRenderDrawColor(grid.passingBy.x, 
-                        grid.passingBy.y, 
-                        grid.passingBy.z, 
-                        grid.passingBy.w);
-                }
-            }
-
-            handler.FillRect(&rect);
-        }
-    }
-
-    if(!find){
-        simulation.mouseCellX = -1;
-        simulation.mouseCellY = -1;  
-    }
-
+// makes the look of a board
+void DrawGridLines(Grid grid, SDLHandler handler){
     handler.SetRenderDrawColor(grid.lineColor.x, 
                         grid.lineColor.y, 
                         grid.lineColor.z, 
@@ -101,6 +59,60 @@ void ConwayGame::Draw(){
 	}
 }
 
+void ConwayGame::Draw(){
+    bool find = false;
+    for (int i = 0; i < grid.rows; i++)
+    {
+        for (int j = 0; j < grid.cols; j++)
+        {
+            SDL_FRect rect = {
+                grid.cellWidthGap + (float)grid.posX + ((float)j * grid.cellWidth),
+                grid.cellHeightGap + (float)grid.posX + ((float)i * grid.cellHeight),
+                (float)grid.cellWidth,
+                (float)grid.cellHeight,
+            };
+
+            //verify if the mouse is in a cell, if so "changes the cell" color
+            if(simulation.mouseX > rect.x && simulation.mouseX < rect.x + rect.w){
+                if(simulation.mouseY > rect.y && simulation.mouseY < rect.y + rect.h){
+                    simulation.mouseCellX = i;
+                    simulation.mouseCellY = j;
+                    find = true;
+
+                    handler.SetRenderDrawColor(grid.passingBy.x, 
+                        grid.passingBy.y, 
+                        grid.passingBy.z, 
+                        grid.passingBy.w);
+                }
+            }
+            else if(grid.cells[i][j].alive){
+                handler.SetRenderDrawColor(grid.aliveColor.x, 
+                    grid.aliveColor.y, 
+                    grid.aliveColor.z, 
+                    grid.aliveColor.w);
+
+            }
+            else{
+                handler.SetRenderDrawColor(grid.deadColor.x, 
+                    grid.deadColor.y, 
+                    grid.deadColor.z, 
+                    grid.deadColor.w);
+            }
+
+            handler.FillRect(&rect);
+        }
+    }
+    
+    //if the mouse isn't in a cell
+    if(!find){
+        simulation.mouseCellX = -1;
+        simulation.mouseCellY = -1;  
+    }
+
+    DrawGridLines(grid, handler);
+}
+
+//square grid based on screen size
 void ConwayGame::AdjustGrid(){
     int windowWidth = 0;
     int windowHeight = 0;
